@@ -27,7 +27,7 @@ model_name = 'ModelResNetPathMNIST'
 # model_name = 'ModelCNNCifar10'
 # control_param_phi = 0.00005   # Good for CNN
 
-n_nodes = 5  # Specifies the total number of clients
+n_nodes = 10  # Specifies the total number of clients
 
 moving_average_holding_param = 0.0  # Moving average coefficient to smooth the estimation of beta, delta, and rho
 
@@ -37,7 +37,7 @@ step_size = 0.01
 # Setting batch_size equal < total_data makes the system use stochastic gradient descent.
 # batch_size = 1000  # Value for deterministic gradient descent
 # total_data = 1000  # Value for deterministic gradient descent
-batch_size = 100  # 100  # Value for stochastic gradient descent
+batch_size = 32  # 100  # Value for stochastic gradient descent
 total_data = 60000  # 60000  #Value for stochastic gradient descent
 
 # Choose whether to run a single instance and plot the instantaneous results or
@@ -60,7 +60,7 @@ use_min_loss = True
 # the processing time at the client, but may cause a worse model accuracy.
 # We use the same minibatch only when the client receives tau_config = 1
 num_iterations_with_same_minibatch_for_tau_equals_one = 3
-
+LOCAL_EPOCHS = 3
 # Specifies whether all the data should be read when using stochastic gradient descent.
 # Reading all the data requires much more memory but should avoid slowing down due to file reading.
 read_all_data_for_stochastic = True
@@ -89,6 +89,7 @@ delay_jitter_sec = 3.0    # default uniform jitter added to base
 
 multiply_global = 1.0
 multiply_local = 1.0
+
 
 # These numbers are from measurement on stochastic gradient descent on SVM smooth with MNIST even/odd data.
 time_gen = TimeGeneration(multiply_local * 0.013015156, multiply_local * 0.006946299, 1e-10,
