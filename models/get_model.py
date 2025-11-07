@@ -11,5 +11,10 @@ def get_model(model_class_name, rand_seed=None, step_size=None):
     elif model_class_name == 'ModelSVMSmooth':
         from models.svm_smooth import ModelSVMSmooth
         return ModelSVMSmooth()
+ 
+    elif model_class_name == 'ModelResNetPathMNIST':
+        from models.resnet_pathmnist_tf import ModelResNetPathMNIST
+        return ModelResNetPathMNIST()
+    
     else:
         raise Exception("Unknown model class name")

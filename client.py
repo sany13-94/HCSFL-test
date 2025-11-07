@@ -37,6 +37,9 @@ try:
         read_all_data_for_stochastic = msg[9]
         use_min_loss = msg[10]
         sim = msg[11]
+        client_id = msg[13] if len(msg) > 13 else None
+        domain_id = msg[12] if len(msg) > 12 else None
+        extra_latency = msg[13] if (len(msg) > 13 and msg[13] is not None) else 0.0
 
         model = get_model(model_name)
         model2 = get_model(model_name)   # Used for computing loss_w_prev_min_loss for stochastic gradient descent,
@@ -170,6 +173,18 @@ try:
             time_all_local = time_local_end - time_local_start
             print('time_all_local =', time_all_local)
 
+            #stragglers
+
+            if (client_id in (0, 1)):  # guarantee clients 0 and 1 are stragglers
+                 import time, random
+                 import config as cfg
+                 base = float(getattr(cfg, "delay_base_sec", 10.0))
+                 jitter = float(getattr(cfg, "delay_jitter_sec", 3.0))
+                 delay = base + random.uniform(0.0, jitter)
+                 uuid = client_id
+                 print(f"[client {uuid}] Simulating straggler delay: {delay:.2f}s")
+                 time.sleep(delay)
+
             if control_alg is not None:
                 control_alg.update_after_all_local(model, train_image, train_label, train_indices,
                                                    w, w_last_global, loss_last_global)
@@ -183,6 +198,8 @@ try:
 
             if is_last_round:
                 break
+          
+            
 
 except (struct.error, socket.error):
     print('Server has stopped')

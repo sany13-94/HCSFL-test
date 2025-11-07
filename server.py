@@ -89,11 +89,23 @@ for sim in sim_runs:
 
             for n in range(0, n_nodes):
                 indices_this_node = indices_each_node_case[case][n]
+                # Assign domains: last client -> domain 3 (test), others round-robin over 0..2
+                if dataset == 'PATHMNIST_DOMAINS':
+                    if n == n_nodes - 1:
+                        domain_id = 3
+                    else:
+                        domain_id = n % 3
+                else:
+                    domain_id = None
+
+             
                 msg = ['MSG_INIT_SERVER_TO_CLIENT', model_name, dataset,
-                       num_iterations_with_same_minibatch_for_tau_equals_one, step_size,
-                       batch_size, total_data, control_alg, indices_this_node, read_all_data_for_stochastic,
-                       use_min_loss, sim]
+                        num_iterations_with_same_minibatch_for_tau_equals_one, step_size,
+                        batch_size, total_data, control_alg, indices_this_node, read_all_data_for_stochastic,
+-                     
++                       use_min_loss, sim, domain_id, n]  # ← append client_id=n at the end
                 send_msg(client_sock_all[n], msg)
+                
 
             print('All clients connected')
 

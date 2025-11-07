@@ -65,10 +65,16 @@ def get_data(dataset, total_data, dataset_file_path=os.path.dirname(__file__), s
             label = get_index_from_one_hot_label(train_label[i])
             train_label_orig.append(label[0])
 
+    elif dataset == 'PATHMNIST_DOMAINS':
+        # PathMNIST: ignore 'total_data' cap here; we return full sets like MNIST branch above does.
+        from data_reader.pathmnist_extractor import pathmnist_extract_all
+        train_image, train_label, test_image, test_label, train_label_orig = pathmnist_extract_all(dataset_file_path)
+        return train_image, train_label, test_image, test_label, train_label_orig
+
     else:
         raise Exception('Unknown dataset name.')
+        return train_image, train_label 
 
-    return train_image, train_label, test_image, test_label, train_label_orig
 
 
 def get_data_train_samples(dataset, samples_list, dataset_file_path=os.path.dirname(__file__)):
