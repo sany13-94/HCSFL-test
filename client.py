@@ -32,7 +32,15 @@ try:
         step_size = msg[4]
         batch_size = msg[5]
         total_data = msg[6]
-        control_alg_server_instance = msg[7]
+        #control_alg_server_instance = msg[7]
+        # client.py
+
+        use_control_alg = msg[7]            # now a bool/tag instead of server instance
+
+        if use_control_alg:
+          control_alg = ControlAlgAdaptiveTauClient()
+        else:
+                control_alg = None
         indices_this_node = msg[8]
         read_all_data_for_stochastic = msg[9]
         use_min_loss = msg[10]
