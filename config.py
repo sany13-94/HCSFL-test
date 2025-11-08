@@ -15,7 +15,7 @@ multi_run_results_file_path = results_file_path + '/MultipleRuns.csv'
 control_param_phi = 0.025   # Good for MNIST with smooth SVM
 
 dataset = 'PATHMNIST_DOMAINS'
-model_name = 'ModelResNetPathMNIST'
+model_name = 'ModelResNetPathMNISTTF'
 
 # Model, dataset, and control parameter configurations for MNIST with CNN
 # dataset = 'MNIST_ORIG_ALL_LABELS'  # Use for CNN model
