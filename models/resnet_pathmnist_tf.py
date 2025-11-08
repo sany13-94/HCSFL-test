@@ -15,6 +15,7 @@ from tf_keras import layers as KL
 from tf_keras import initializers as KI
 
 
+
 def conv_bn_relu(x, filters, k, s, training=True):
     x = KL.Conv2D(filters, k, strides=s, padding='same', use_bias=False,
                   kernel_initializer=KI.VarianceScaling())(x)
@@ -68,8 +69,9 @@ class ModelResNetPathMNIST(ModelCNNAbstract):
         x = layer_group(x, 128, 2, 2, training=training)
         x = layer_group(x, 256, 2, 2, training=training)
         x = layer_group(x, 512, 2, 2, training=training)
-        x = KL.AveragePooling2D(pool_size=4, strides=1, padding='valid')(x)
-        x = KL.Flatten()(x)
+      
+        x = KL.GlobalAveragePooling2D()(x)
+
         logits = KL.Dense(9, kernel_initializer=KI.VarianceScaling())(x)
 
         # ---- losses/metrics
