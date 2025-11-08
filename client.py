@@ -37,10 +37,9 @@ try:
 
         use_control_alg = msg[7]            # now a bool/tag instead of server instance
 
-        if use_control_alg:
-          control_alg = ControlAlgAdaptiveTauClient()
-        else:
-                control_alg = None
+      
+        control_alg = ControlAlgAdaptiveTauClient() if use_control_alg else None
+        
         indices_this_node = msg[8]
         read_all_data_for_stochastic = msg[9]
         use_min_loss = msg[10]
@@ -77,12 +76,12 @@ try:
         last_batch_read_count = None
 
         data_size_local = len(indices_this_node)
-
+        """
         if isinstance(control_alg_server_instance, ControlAlgAdaptiveTauServer):
             control_alg = ControlAlgAdaptiveTauClient()
         else:
             control_alg = None
-
+        """
         w_prev_min_loss = None
         w_last_global = None
         total_iterations = 0
