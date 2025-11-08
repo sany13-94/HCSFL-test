@@ -1,7 +1,9 @@
 from util.time_generation import TimeGeneration
 import os
 
-SERVER_ADDR= 'localhost'   # When running in a real distributed setting, change to the server's IP address
+#SERVER_ADDR= 'localhost'   # When running in a real distributed setting, change to the server's IP address
+SERVER_ADDR = "127.0.0.1"   # NOT "0.0.0.0" and not bare "localhost"
+
 SERVER_PORT = 51000
 
 dataset_file_path = os.path.join(os.path.dirname(__file__), 'datasets')
