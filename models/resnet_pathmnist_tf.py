@@ -83,6 +83,23 @@ class ModelResNetPathMNISTTF(ModelCNNAbstract):
         self.n_classes = n_classes
         self.graph_created = False
         self._last_loss_val = None
+    
+    def get_weight_dimension(self, *_args, **_kwargs):
+      # HCSFL calls this before training to size w_global
+      return self.total_params
+
+    def get_init_weight(self, dim_w, rand_seed=None):
+      # Initialize using the TF initializer output (already run in __init__)
+      # Optionally make it deterministic with a tiny noise if needed
+      w0 = self.get_weights_flat()
+      if rand_seed is not None:
+        rng = np.random.RandomState(rand_seed)
+        # (optional) very small jitter to match other models' behavior
+        w0 = w0 + 0.0 * rng.randn(*w0.shape).astype(np.float32)
+      # sanity: ensure the requested dim matches
+      if w0.size != dim_w:
+        raise ValueError(f"Init weight dim mismatch: got {w0.size}, expected {dim_w}")
+      return w0
 
     def create_graph(self, learning_rate=None):
         # ---- placeholders
@@ -135,13 +152,16 @@ class ModelResNetPathMNISTTF(ModelCNNAbstract):
         correct = tf.equal(tf.argmax(self.probs, 1), tf.argmax(self.y_, 1))
         self.acc_tensor = tf.reduce_mean(tf.cast(correct, tf.float32))
 
+        self.all_weights = self.trainable_vars  
+
         # ---- flat weights + assign ops (to interop with server/client using flat w vectors)
-        self.var_shapes = [v.shape.as_list() for v in self.trainable_vars]
-        self.var_sizes  = [int(np.prod(s)) for s in self.var_shapes]
+        # HCSFL's cnn_abstract expects these:
+        self.all_weights = self.trainable_vars                           # <— NEW
+        self.var_shapes  = [v.shape.as_list() for v in self.all_weights] # (already present, keep)
+        self.var_sizes   = [int(np.prod(s)) for s in self.var_shapes]
         self.total_params = int(np.sum(self.var_sizes))
 
-        self.flat_weights = tf.concat([tf.reshape(v, [-1]) for v in self.trainable_vars], axis=0)
-
+        self.flat_weights = tf.concat([tf.reshape(v, [-1]) for v in self.all_weights], axis=0)
         self._assign_phs = [tf.placeholder(v.dtype, shape=s) for v, s in zip(self.trainable_vars, self.var_shapes)]
         self._assign_ops = [tf.assign(v, p) for v, p in zip(self.trainable_vars, self._assign_phs)]
 
